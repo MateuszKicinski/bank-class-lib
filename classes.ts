@@ -4,7 +4,7 @@ interface MoneyOperation {
     source;
     target;
 
-    getInfo(){
+    getInfo();
 }
 
 export class History {
@@ -31,7 +31,7 @@ class Customer {
     }
 }
 
-class Account extends History {
+export class Account extends History {
     private id: number;
     private customerId: number;
     private balance: number;
@@ -56,9 +56,9 @@ class Account extends History {
     }
 }
 
-export class MoneyPayment implements MoneyOperation{
+export class MoneyPayment implements MoneyOperation {
     source: Account;
-    target: Account | string;
+    target: any;
 
     constructor(sourceAccount: Account, targetAccount: Account) {
         this.source = sourceAccount;
@@ -66,26 +66,22 @@ export class MoneyPayment implements MoneyOperation{
     }
 
     transfer(amount: number): boolean {
-        const initialSum = this.sourceAccount.currentBalance() + this.targetAccount.currentBalance();
-        this.sourceAccount.subtract(amount);
-        this.targetAccount.add(amount);
-        if (this.sourceAccount.currentBalance() < 0) {
-            this.sourceAccount.add(amount);
-            this.targetAccount.subtract(amount);
+        const initialSum = this.source.currentBalance() + this.target.currentBalance();
+        this.source.subtract(amount);
+        this.target.add(amount);
+        if (this.source.currentBalance() < 0) {
+            this.source.add(amount);
+            this.target.subtract(amount);
             return false;
         }
         return true;
     }
 
 
-
     getInfo() {
     }
 }
 
-export class MoneyWithdraw
-
-()
-{
+export class MoneyWithdraw {
 
 }

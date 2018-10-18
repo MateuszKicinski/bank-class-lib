@@ -13,8 +13,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-{
-}
 var History = /** @class */ (function () {
     function History() {
     }
@@ -57,18 +55,19 @@ var Account = /** @class */ (function (_super) {
     };
     return Account;
 }(History));
+exports.Account = Account;
 var MoneyPayment = /** @class */ (function () {
     function MoneyPayment(sourceAccount, targetAccount) {
         this.source = sourceAccount;
         this.target = targetAccount;
     }
     MoneyPayment.prototype.transfer = function (amount) {
-        var initialSum = this.sourceAccount.currentBalance() + this.targetAccount.currentBalance();
-        this.sourceAccount.subtract(amount);
-        this.targetAccount.add(amount);
-        if (this.sourceAccount.currentBalance() < 0) {
-            this.sourceAccount.add(amount);
-            this.targetAccount.subtract(amount);
+        var initialSum = this.source.currentBalance() + this.target.currentBalance();
+        this.source.subtract(amount);
+        this.target.add(amount);
+        if (this.source.currentBalance() < 0) {
+            this.source.add(amount);
+            this.target.subtract(amount);
             return false;
         }
         return true;
@@ -84,5 +83,3 @@ var MoneyWithdraw = /** @class */ (function () {
     return MoneyWithdraw;
 }());
 exports.MoneyWithdraw = MoneyWithdraw;
-(function () {
-});
