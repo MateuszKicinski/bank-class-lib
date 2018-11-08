@@ -1,10 +1,17 @@
 import {TSMap} from "typescript-map";
 
-interface MoneyOperation {
-    source;
-    target;
+abstract class MoneyOperation {
+    wasExecuted: boolean;
 
-    getInfo();
+    abstract executeAction(): boolean;
+
+    execute() {
+        if (this.wasExecuted) {
+            this.wasExecuted = true;
+            return this.executeAction();
+        }
+        throw 'Operation was already executed';
+    }
 }
 
 export class History {
@@ -58,27 +65,31 @@ export class Account extends History {
 
 export class MoneyPayment implements MoneyOperation {
     source: Account;
-    target: any;
+    target: Account;
+    amount: number;
 
-    constructor(sourceAccount: Account, targetAccount: Account) {
+    constructor(sourceAccount: Account, targetAccount: Account, amount: number) {
         this.source = sourceAccount;
         this.target = targetAccount;
+        this.amount = amount;
     }
 
-    transfer(amount: number): boolean {
+    executeAction(): boolean {
         const initialSum = this.source.currentBalance() + this.target.currentBalance();
-        this.source.subtract(amount);
-        this.target.add(amount);
+        this.source.subtract(this.amount);
+        this.target.add(this.amount);
         if (this.source.currentBalance() < 0) {
-            this.source.add(amount);
-            this.target.subtract(amount);
+            this.source.add(this.amount);
+            this.target.subtract(this.amount);
             return false;
         }
         return true;
     }
 
+    wasExecuted: boolean;
 
-    getInfo() {
+    execute(): boolean {
+        return undefined;
     }
 }
 
