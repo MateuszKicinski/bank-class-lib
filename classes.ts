@@ -38,7 +38,7 @@ class Customer {
     }
 }
 
-export class Account extends History {
+export class Account extends History implements Deposit, Withdraw, Transfer {
     private id: number;
     private customerId: number;
     private balance: number;
@@ -54,45 +54,105 @@ export class Account extends History {
         return this.balance;
     }
 
-    add(amount: number) {
+    deposit(amount: number) {
         this.balance += amount;
     }
 
-    subtract(amount: number) {
+    withdraw(amount: number) {
         this.balance -= amount;
     }
-}
 
-export class MoneyPayment implements MoneyOperation {
-    source: Account;
-    target: Account;
-    amount: number;
+    transfer(targetAccount, amount: number) {
+        this.balance -= amount;
+        targetAccount.transferTo(amount);
+    };
 
-    constructor(sourceAccount: Account, targetAccount: Account, amount: number) {
-        this.source = sourceAccount;
-        this.target = targetAccount;
-        this.amount = amount;
+    transferTo(amount: number) {
+        this.balance += amount;
     }
 
-    executeAction(): boolean {
-        const initialSum = this.source.currentBalance() + this.target.currentBalance();
-        this.source.subtract(this.amount);
-        this.target.add(this.amount);
-        if (this.source.currentBalance() < 0) {
-            this.source.add(this.amount);
-            this.target.subtract(this.amount);
-            return false;
+}
+
+export interface Deposit {
+    deposit(amount: number);
+}
+
+export interface Withdraw {
+    withdraw(amount: number);
+}
+
+export interface Transfer {
+    transfer(targetAccount, amount: number);
+
+    transferTo(amount);
+}
+
+export class DepositAccount extends Account {
+    interestCalculator: InterestCalculator;
+    openingDate: Date;
+    closingDate: Date;
+
+    constructor(accountId: number, clientId: number, interestCalculator: InterestCalculator, closingDate: Date, amount: number) {
+        super(accountId, clientId);
+        this.deposit(amount);
+        this.openingDate = new Date();
+        this.closingDate = closingDate;
+        this.interestCalculator = interestCalculator;
+    }
+
+    close() {
+        if (new Date() < this.closingDate) {
+            return this.currentBalance();
         }
-        return true;
-    }
-
-    wasExecuted: boolean;
-
-    execute(): boolean {
-        return undefined;
+        const interest = this.interestCalculator.calculate(this.currentBalance(), this.openingDate, this.closingDate);
+        return this.currentBalance() + interest;
     }
 }
 
-export class MoneyWithdraw {
+export class LoanAccount extends Account {
+    openingDate: Date;
+    closingDate: Date;
+    loanAmount: number;
+    interest: number;
+    private wasMoneyCollected: boolean;
 
+    constructor(accountId: number, clientId: number, interestCalculator: InterestCalculator, closingDate: Date, amount: number) {
+        super(accountId, clientId);
+        this.loanAmount = amount;
+        this.deposit(amount);
+        this.openingDate = new Date();
+        this.closingDate = closingDate;
+        this.interest = interestCalculator.calculate(this.loanAmount, this.openingDate, this.closingDate);
+    }
+
+    get(): number | void {
+        if (!this.wasMoneyCollected) {
+            this.withdraw(this.loanAmount);
+            this.wasMoneyCollected = true;
+            return this.loanAmount;
+        }
+    }
+
+    repayAmount() {
+        return this.loanAmount + this.interest;
+    }
+
+    repay(amount: number): boolean {
+        this.deposit(amount);
+        return this.currentBalance() >= this.loanAmount;
+    }
+}
+
+export interface InterestCalculator {
+    calculate(baseAmount: number, openingDate: Date, closingDate: Date): number;
+}
+
+export class SimpleCalculator implements InterestCalculator {
+    private interestRate: number;
+    constructor(interestRate: number){
+        this.interestRate = interestRate;
+    }
+    calculate(baseAmount: number, openingDate: Date, closingDate: Date): number {
+        return baseAmount * this.interestRate;
+    }
 }
