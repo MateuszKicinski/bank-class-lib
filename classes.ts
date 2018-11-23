@@ -1,4 +1,5 @@
 import {TSMap} from "typescript-map";
+import {IBABank, IBATransaction, InterBankAgency} from "./InterBankAgency";
 
 abstract class MoneyOperation {
     wasExecuted: boolean;
@@ -69,6 +70,10 @@ export class Account extends History implements Deposit, Withdraw, Transfer {
 
     transferTo(amount: number) {
         this.balance += amount;
+    }
+
+    getId(){
+        return this.id;
     }
 
 }
@@ -155,4 +160,21 @@ export class SimpleCalculator implements InterestCalculator {
     calculate(baseAmount: number, openingDate: Date, closingDate: Date): number {
         return baseAmount * this.interestRate;
     }
+}
+
+export class MyBank extends IBABank{
+    private accounts : Account[] = [];
+
+    constructor(name:string, id:number, agency: InterBankAgency){
+        super(name, id, agency);
+    }
+
+    fail() {
+    }
+
+    receiveTransaction(transaction: IBATransaction) {
+        const targetAccount = this.accounts.filter(account => account.getId() === transaction.targetClientInfo)[0];
+        targetAccount.deposit(transaction.amount);
+    }
+
 }
