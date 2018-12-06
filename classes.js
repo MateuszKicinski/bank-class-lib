@@ -13,6 +13,30 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var InterBankAgency_1 = require("./InterBankAgency");
+var MoneyOperation = /** @class */ (function () {
+    function MoneyOperation() {
+    }
+    MoneyOperation.prototype.execute = function () {
+        if (this.wasExecuted) {
+            return this.executeAction();
+        }
+        throw new Error('Operation was already executed');
+    };
+    return MoneyOperation;
+}());
+var Deposit = /** @class */ (function (_super) {
+    __extends(Deposit, _super);
+    function Deposit(target, amount) {
+        var _this = _super.call(this) || this;
+        _this.target = target;
+        return _this;
+    }
+    Deposit.prototype.executeAction = function () {
+        this.target.balance -= amount;
+    };
+    return Deposit;
+}(MoneyOperation));
 var History = /** @class */ (function () {
     function History() {
     }
@@ -47,39 +71,97 @@ var Account = /** @class */ (function (_super) {
     Account.prototype.currentBalance = function () {
         return this.balance;
     };
-    Account.prototype.add = function (amount) {
+    Account.prototype.deposit = function (amount) {
         this.balance += amount;
     };
-    Account.prototype.subtract = function (amount) {
+    Account.prototype.withdraw = function (amount) {
         this.balance -= amount;
+    };
+    Account.prototype.transfer = function (targetAccount, amount) {
+        this.balance -= amount;
+        targetAccount.transferTo(amount);
+    };
+    ;
+    Account.prototype.transferTo = function (amount) {
+        this.balance += amount;
+    };
+    Account.prototype.getId = function () {
+        return this.id;
     };
     return Account;
 }(History));
 exports.Account = Account;
-var MoneyPayment = /** @class */ (function () {
-    function MoneyPayment(sourceAccount, targetAccount) {
-        this.source = sourceAccount;
-        this.target = targetAccount;
+var DepositAccount = /** @class */ (function (_super) {
+    __extends(DepositAccount, _super);
+    function DepositAccount(accountId, clientId, interestCalculator, closingDate, amount) {
+        var _this = _super.call(this, accountId, clientId) || this;
+        _this.deposit(amount);
+        _this.openingDate = new Date();
+        _this.closingDate = closingDate;
+        _this.interestCalculator = interestCalculator;
+        return _this;
     }
-    MoneyPayment.prototype.transfer = function (amount) {
-        var initialSum = this.source.currentBalance() + this.target.currentBalance();
-        this.source.subtract(amount);
-        this.target.add(amount);
-        if (this.source.currentBalance() < 0) {
-            this.source.add(amount);
-            this.target.subtract(amount);
-            return false;
+    DepositAccount.prototype.close = function () {
+        if (new Date() < this.closingDate) {
+            return this.currentBalance();
         }
-        return true;
+        var interest = this.interestCalculator.calculate(this.currentBalance(), this.openingDate, this.closingDate);
+        return this.currentBalance() + interest;
     };
-    MoneyPayment.prototype.getInfo = function () {
-    };
-    return MoneyPayment;
-}());
-exports.MoneyPayment = MoneyPayment;
-var MoneyWithdraw = /** @class */ (function () {
-    function MoneyWithdraw() {
+    return DepositAccount;
+}(Account));
+exports.DepositAccount = DepositAccount;
+var LoanAccount = /** @class */ (function (_super) {
+    __extends(LoanAccount, _super);
+    function LoanAccount(accountId, clientId, interestCalculator, closingDate, amount) {
+        var _this = _super.call(this, accountId, clientId) || this;
+        _this.loanAmount = amount;
+        _this.deposit(amount);
+        _this.openingDate = new Date();
+        _this.closingDate = closingDate;
+        _this.interest = interestCalculator.calculate(_this.loanAmount, _this.openingDate, _this.closingDate);
+        return _this;
     }
-    return MoneyWithdraw;
+    LoanAccount.prototype.get = function () {
+        if (!this.wasMoneyCollected) {
+            this.withdraw(this.loanAmount);
+            this.wasMoneyCollected = true;
+            return this.loanAmount;
+        }
+    };
+    LoanAccount.prototype.repayAmount = function () {
+        return this.loanAmount + this.interest;
+    };
+    LoanAccount.prototype.repay = function (amount) {
+        this.deposit(amount);
+        return this.currentBalance() >= this.loanAmount;
+    };
+    return LoanAccount;
+}(Account));
+exports.LoanAccount = LoanAccount;
+var SimpleCalculator = /** @class */ (function () {
+    function SimpleCalculator(interestRate) {
+        this.interestRate = interestRate;
+    }
+    SimpleCalculator.prototype.calculate = function (baseAmount, openingDate, closingDate) {
+        return baseAmount * this.interestRate;
+    };
+    return SimpleCalculator;
 }());
-exports.MoneyWithdraw = MoneyWithdraw;
+exports.SimpleCalculator = SimpleCalculator;
+var MyBank = /** @class */ (function (_super) {
+    __extends(MyBank, _super);
+    function MyBank(name, id, agency) {
+        var _this = _super.call(this, name, id, agency) || this;
+        _this.accounts = [];
+        return _this;
+    }
+    MyBank.prototype.fail = function () {
+    };
+    MyBank.prototype.receiveTransaction = function (transaction) {
+        var targetAccount = this.accounts.filter(function (account) { return account.getId() === transaction.targetClientInfo; })[0];
+        targetAccount.deposit(transaction.amount);
+    };
+    return MyBank;
+}(InterBankAgency_1.IBABank));
+exports.MyBank = MyBank;

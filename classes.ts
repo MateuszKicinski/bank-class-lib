@@ -1,17 +1,31 @@
 import {TSMap} from "typescript-map";
 import {IBABank, IBATransaction, InterBankAgency} from "./InterBankAgency";
 
+
 abstract class MoneyOperation {
     wasExecuted: boolean;
 
-    abstract executeAction(): boolean;
+    abstract executeAction();
 
-    execute() {
+    public execute() {
         if (this.wasExecuted) {
-            this.wasExecuted = true;
             return this.executeAction();
         }
-        throw 'Operation was already executed';
+        throw new Error('Operation was already executed');
+    }
+}
+
+class Deposit extends MoneyOperation {
+    private target: Account;
+    private amount: number
+
+    constructor(target: Account, amount: number) {
+        super();
+        this.target = target;
+    }
+
+    executeAction() {
+        this.target.balance -= amount;
     }
 }
 
@@ -39,7 +53,7 @@ class Customer {
     }
 }
 
-export class Account extends History implements Deposit, Withdraw, Transfer {
+export class Account extends History implements Withdraw, Transfer {
     private id: number;
     private customerId: number;
     private balance: number;
@@ -72,14 +86,10 @@ export class Account extends History implements Deposit, Withdraw, Transfer {
         this.balance += amount;
     }
 
-    getId(){
+    getId() {
         return this.id;
     }
 
-}
-
-export interface Deposit {
-    deposit(amount: number);
 }
 
 export interface Withdraw {
@@ -154,18 +164,20 @@ export interface InterestCalculator {
 
 export class SimpleCalculator implements InterestCalculator {
     private interestRate: number;
-    constructor(interestRate: number){
+
+    constructor(interestRate: number) {
         this.interestRate = interestRate;
     }
+
     calculate(baseAmount: number, openingDate: Date, closingDate: Date): number {
         return baseAmount * this.interestRate;
     }
 }
 
-export class MyBank extends IBABank{
-    private accounts : Account[] = [];
+export class MyBank extends IBABank {
+    private accounts: Account[] = [];
 
-    constructor(name:string, id:number, agency: InterBankAgency){
+    constructor(name: string, id: number, agency: InterBankAgency) {
         super(name, id, agency);
     }
 
