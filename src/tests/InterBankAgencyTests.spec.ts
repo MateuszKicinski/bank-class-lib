@@ -1,8 +1,8 @@
-import {IBATransfer, InterBankAgency} from "./model/iba/InterBankAgency";
-import {Bank} from "./model/bank";
-import {ExtenedAccount} from "./model/accounts/extended-account";
-import {DepositOperation} from "./model/operations/operation";
+import {IBATransfer, InterBankAgency} from "../model/iba/InterBankAgency";
+import {Bank} from "../model/bank";
+import {ExtenedAccount} from "../model/accounts/extended-account";
 import chai = require('chai');
+import {DepositOperation} from "../model/operations/deposit";
 
 const expect = chai.expect;
 describe('Inter Account Agency', () => {
