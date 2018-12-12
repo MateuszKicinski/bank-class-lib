@@ -18,8 +18,8 @@ export interface Account extends Reportable {
 }
 
 export class InsufficientFundsError implements Error {
-    message: 'Insufficient funds in the account!';
-    name: 'InsufficientFundsError';
+    message ='Insufficient funds in the account!';
+    name = 'InsufficientFundsError';
     stack: string;
 
 }

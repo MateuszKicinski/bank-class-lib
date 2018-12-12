@@ -1,4 +1,4 @@
-import {DebitAccount} from "../../model/accounts/debit-account";
+import {DebitAccount} from "../../../src/model/accounts/debit-account";
 import {TestOperation} from "./extended-account.spec";
 import chai = require('chai');
 

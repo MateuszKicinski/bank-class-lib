@@ -1,8 +1,8 @@
 import chai = require('chai');
-import {Operation} from "../../model/operations/operation";
-import {Interest} from "../../model/interest";
-import {Report} from "../../model/reports";
-import {ExtenedAccount} from "../../model/accounts/extended-account";
+import {Operation} from "../../../src/model/operations/operation";
+import {Interest} from "../../../src/model/interest";
+import {Report} from "../../../src/model/reports";
+import {ExtenedAccount} from "../../../src/model/accounts/extended-account";
 
 const expect = chai.expect;
 

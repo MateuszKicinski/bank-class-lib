@@ -27,8 +27,8 @@ export enum OperationType {
 }
 
 export class OperationCannotBeMadeError implements Error {
-    message: 'Operation cannot be made!';
-    name: 'OperationCannotBeMadeError';
+    message = 'Operation cannot be made!';
+    name = 'OperationCannotBeMadeError';
     stack: string;
 }
 

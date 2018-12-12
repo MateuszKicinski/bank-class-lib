@@ -1,6 +1,6 @@
-import {Bank} from "../model/bank";
-import {InterBankAgency} from "../model/iba/InterBankAgency";
-import {DebitAccount} from "../model/accounts/debit-account";
+import {Bank} from "../../src/model/bank";
+import {InterBankAgency} from "../../src/model/iba/InterBankAgency";
+import {DebitAccount} from "../../src/model/accounts/debit-account";
 
 describe('Bank integration tests', () => {
 

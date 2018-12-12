@@ -1,6 +1,6 @@
-import {OperationType} from "../../model/operations/operation";
+import {OperationType} from "../../../src/model/operations/operation";
 import {TestAccount} from "./deposit.spec";
-import {TransferOperation} from "../../model/operations/transfer";
+import {TransferOperation} from "../../../src/model/operations/transfer";
 import chai = require('chai');
 
 const expect = chai.expect;

@@ -1,8 +1,8 @@
-import {OperationType} from "../../model/operations/operation";
+import {OperationType} from "../../../src/model/operations/operation";
 import {TestAccount} from "./deposit.spec";
-import {IBAIncomingOperation} from "../../model/operations/iba-in";
-import {IBATransfer, InterBankAgency} from "../../model/iba/InterBankAgency";
-import {Bank} from "../../model/bank";
+import {IBAIncomingOperation} from "../../../src/model/operations/iba-in";
+import {IBATransfer, InterBankAgency} from "../../../src/model/iba/InterBankAgency";
+import {Bank} from "../../../src/model/bank";
 import chai = require('chai');
 
 const expect = chai.expect;

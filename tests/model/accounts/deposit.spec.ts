@@ -1,6 +1,6 @@
-import {DepositAccount} from "../../model/accounts/deposit-account";
-import {Interest} from "../../model/interest";
-import {Report} from "../../model/reports";
+import {DepositAccount} from "../../../src/model/accounts/deposit-account";
+import {Interest} from "../../../src/model/interest";
+import {Report} from "../../../src/model/reports";
 import {TestAccount} from "../operations/deposit.spec";
 import chai = require('chai');
 

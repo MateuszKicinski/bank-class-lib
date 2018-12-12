@@ -1,7 +1,7 @@
-import {Account} from "../../model/accounts/account";
-import {Operation, OperationType} from "../../model/operations/operation";
-import {Report} from "../../model/reports";
-import {DepositOperation} from "../../model/operations/deposit";
+import {Account} from "../../../src/model/accounts/account";
+import {Operation, OperationType} from "../../../src/model/operations/operation";
+import {Report} from "../../../src/model/reports";
+import {DepositOperation} from "../../../src/model/operations/deposit";
 import chai = require('chai');
 
 const expect = chai.expect;

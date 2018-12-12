@@ -1,9 +1,9 @@
-import {DepositAccount} from "../../model/accounts/deposit-account";
-import {Interest} from "../../model/interest";
-import {Report} from "../../model/reports";
+import {DepositAccount} from "../../../src/model/accounts/deposit-account";
+import {Interest} from "../../../src/model/interest";
+import {Report} from "../../../src/model/reports";
 import {TestAccount} from "../operations/deposit.spec";
 import chai = require('chai');
-import {LoanAccount} from "../../model/accounts/loan-account";
+import {LoanAccount} from "../../../src/model/accounts/loan-account";
 
 const expect = chai.expect;
 

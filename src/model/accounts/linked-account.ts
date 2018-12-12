@@ -11,7 +11,7 @@ export abstract class LinkedAccount implements Account {
 
     abstract close();
 
-    constructor(id: number, owner: string) {
+    protected constructor(id: number, owner: string) {
         this.owner = owner;
         this.id = id;
     }

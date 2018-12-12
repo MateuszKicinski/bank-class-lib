@@ -3,7 +3,7 @@ import {Report} from "../reports";
 import {Account, AccountReport, InsufficientFundsError} from "./account";
 
 export class DebitAccount implements Account {
-    private readonly debitAmount: number;
+    private  debitAmount: number;
     private history: Operation[] = [];
     private balance: number;
     private id: number;
