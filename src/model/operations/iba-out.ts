@@ -4,20 +4,21 @@ import {Account} from "../accounts/account";
 import {Report} from "../reports";
 import {Operation, OperationType} from "./operation";
 
-export class IBAOutgoingOperation implements Operation {
+export class IBAOutgoingOperation extends Operation {
     amount: number;
     description: string;
-    executionDate: Date;
-    type: OperationType.IBAOutgoingOperation;
+    type = OperationType.IBAOutgoingOperation;
     private bank: Bank;
-    private transaction: IBATransaction;
+    public transaction: IBATransaction;
     private sourceAccount: Account;
 
     constructor(bank: Bank, sourceAccount: Account, targetBankId: number, targetClientInfo: any, amount: number) {
+        super();
         this.bank = bank;
         this.transaction = new IBATransfer(amount, this.bank.getId(), sourceAccount.getId(), targetBankId, targetClientInfo);
         this.amount = this.transaction.amount;
         this.sourceAccount = sourceAccount;
+        this.description = `${this.type} of ${this.transaction.amount} from account ${this.transaction.sourceClientInfo} to bank ${this.transaction.targetBankId}`;
     }
 
     details(): string {
@@ -29,7 +30,7 @@ export class IBAOutgoingOperation implements Operation {
     }
 
     isPossible(): boolean {
-        return this.sourceAccount.availableFunds() > this.amount
+        return this.sourceAccount.availableFunds() >= this.amount
     }
 
     public make() {

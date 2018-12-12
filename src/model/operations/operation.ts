@@ -23,6 +23,7 @@ export enum OperationType {
     TransferOperation = 'Transfer',
     IBAIncomingOperation = 'IBA Incoming',
     IBAOutgoingOperation = 'IBA Outgoing',
+    LinkedAccountOperation = 'Linked Account',
 }
 
 export class OperationCannotBeMadeError implements Error {

@@ -4,7 +4,6 @@ import chai = require('chai');
 
 const expect = chai.expect;
 
-
 describe('debit account tests', () => {
     describe('create', () => {
 
@@ -25,7 +24,7 @@ describe('debit account tests', () => {
         });
 
         it('should get correct balance', () => {
-            expect(account.availableFunds()).to.equal(0);
+            expect(account.availableFunds()).to.equal(100);
         });
 
         it('should get correct history', () => {
@@ -54,7 +53,7 @@ describe('debit account tests', () => {
 
         it('should add correct amount of money to account', () => {
             account.add(new TestOperation(200));
-            expect(account.availableFunds()).equal(500);
+            expect(account.availableFunds()).equal(600);
         });
     });
 
@@ -67,7 +66,7 @@ describe('debit account tests', () => {
 
         it('should add correct amount of money to account', () => {
             account.add(new TestOperation(200));
-            expect(account.availableFunds()).equal(150);
+            expect(account.availableFunds()).equal(250);
         });
     });
 

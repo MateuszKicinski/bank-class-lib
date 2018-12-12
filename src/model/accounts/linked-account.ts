@@ -1,6 +1,5 @@
 import {Account} from "./account";
-import {Operation} from "../operations/operation";
-import {IdGenerator} from "../utils";
+import {Operation, OperationType} from "../operations/operation";
 import {Report} from "../reports";
 
 export abstract class LinkedAccount implements Account {
@@ -8,12 +7,13 @@ export abstract class LinkedAccount implements Account {
     private owner: string;
     protected active: boolean;
     protected balance: number;
-    private history: Operation[];
+    private history: Operation[] = [];
 
     abstract close();
 
-    constructor() {
-        this.id = IdGenerator.generateId();
+    constructor(id: number, owner: string) {
+        this.owner = owner;
+        this.id = id;
     }
 
     add(operation: Operation) {
@@ -43,5 +43,26 @@ export abstract class LinkedAccount implements Account {
     }
 
     abstract generateReport(): Report;
+
+}
+
+export class LinkedAccountOperation extends Operation {
+    amount: number;
+    description: string;
+    type = OperationType.LinkedAccountOperation;
+    linked: LinkedAccount;
+    parent: Account;
+
+    constructor(linked: LinkedAccount, parent: Account, amount: number) {
+        super();
+        this.linked = linked;
+        this.parent = parent;
+        this.amount = amount;
+    }
+
+    make() {
+        this.linked.subtract(this);
+        this.parent.add(this)
+    }
 
 }

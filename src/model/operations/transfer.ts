@@ -6,7 +6,7 @@ export class TransferOperation implements Operation {
     amount: number;
     description: string;
     executionDate: Date;
-    type: OperationType;
+    type = OperationType.TransferOperation;
     source: Account;
     target: Account;
 
@@ -14,7 +14,7 @@ export class TransferOperation implements Operation {
         this.source = source;
         this.target = target;
         this.amount = amount;
-        this.description = `${this.type} of ${this.amount} fromt account ${this.source.getId()} to account ${this.target.getId()}`
+        this.description = `${this.type} of ${this.amount} from account ${this.source.getId()} to account ${this.target.getId()}`
     }
 
 
@@ -23,11 +23,13 @@ export class TransferOperation implements Operation {
     }
 
     isPossible(): boolean {
-        return false;
+        return this.source.availableFunds() >= this.amount;
     }
 
 
     makeOperationScenario() {
+        this.source.subtract(this);
+        this.target.add(this);
     }
 
     toReport(): Report {

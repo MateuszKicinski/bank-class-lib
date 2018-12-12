@@ -1,19 +1,22 @@
 import {Interest} from "../interest";
-import {Account, ExtenedAccount} from "./account";
-import {Operation, TransferOperation} from "../operations/operation";
-import {LinkedAccount} from "./linked-account";
+import {Account} from "./account";
+import {LinkedAccount, LinkedAccountOperation} from "./linked-account";
 import {Report, ReportType} from "../reports";
+import {TransferOperation} from "../operations/transfer";
 
 export class LoanAccount extends LinkedAccount {
     creditAmount: number;
     parentAccount: Account;
     interest: Interest;
 
-    constructor(operation: Operation, interest: Interest, parentAccount: Account) {
-        super();
+    constructor(amount: number, interest: Interest, parentAccount: Account, id: number, owner: string) {
+        super(id, owner);
         this.parentAccount = parentAccount;
-        this.creditAmount = operation.amount;
+        this.creditAmount = amount;
         this.interest = interest;
+        this.active = true;
+        new LinkedAccountOperation(this, parentAccount,amount).make();
+        this.balance = 0;
     }
 
     active: boolean;
@@ -35,7 +38,7 @@ export class LoanAccountReport implements Report {
     reportType: ReportType.LoanReport;
     loan: LoanAccount;
 
-    constructor(loan: LoanAccount){
+    constructor(loan: LoanAccount) {
         this.loan = loan;
     }
 

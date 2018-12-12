@@ -8,15 +8,16 @@ export class IBAIncomingOperation implements Operation {
     amount: number;
     description: string;
     executionDate: Date;
-    type: OperationType.IBAIncomingOperation;
+    type = OperationType.IBAIncomingOperation;
     private bank: Bank;
-    private transaction: IBATransaction;
+    private readonly transaction: IBATransaction;
     private targetAccount: Account;
 
     constructor(bank: Bank, transaction: IBATransaction) {
         this.bank = bank;
         this.transaction = transaction;
         this.amount = transaction.amount;
+        this.description = `${this.type} of ${this.transaction.amount} from bank ${this.transaction.sourceBankId} to account ${this.transaction.targetClientInfo}`;
     }
 
 

@@ -1,6 +1,6 @@
 import {IBABank, IBATransaction, IBATransfer, InterBankAgency} from "./iba/InterBankAgency";
 import {Account} from "./accounts/account";
-import {IBAIncomingOperation} from "./operations/operation";
+import {IBAIncomingOperation} from "./operations/iba-in";
 
 export class Bank extends IBABank {
     accounts: Account[] = [];
