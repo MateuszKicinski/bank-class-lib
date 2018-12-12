@@ -1,55 +1,19 @@
-import {Interest} from "../interest";
-import {Operation} from "../operation";
-import {IdGenerator} from "../utils";
-import {LinkedAccount} from "./linked-account";
+import {Operation} from "../operations/operation";
+import {Report, Reportable, ReportType} from "../reports";
 
-export class Account {
-    private id: number;
-    owner: string;
-    dateOfOpening: Date;
-    private balance: number;
-    interest: Interest;
-    historyOfOperations: Operation[];
-    linkedAccounts: LinkedAccount[];
+export interface Account extends Reportable {
 
-    constructor(customerId: number, owner: string) {
-        this.id = IdGenerator.generateId();
-        this.owner = owner;
-        this.dateOfOpening = new Date();
-        this.historyOfOperations = [];
-    }
+    add(operation: Operation);
 
+    subtract(operation: Operation);
 
-    changeInterest(newInterest: Interest) {
-        if (this.interest) {
-            this.balance += this.interest.calculate();
-        }
-        this.interest = newInterest;
-    }
+    availableFunds();
 
-    add(operation: Operation) {
-        this.balance += operation.amount;
-        this.historyOfOperations.push(operation);
-    }
+    getId(): number;
 
-    subtract(operation: Operation) {
-        if (this.balance < operation.amount) {
-            throw InsufficientFundsError;
-        }
-        this.balance -= operation.amount;
-    }
+    getOwner();
 
-    checkBalance() {
-        return this.balance;
-    }
-
-    getId() {
-        return this.id;
-    }
-
-    getOwner() {
-        return this.owner;
-    }
+    getHistory();
 
 }
 
@@ -58,6 +22,24 @@ export class InsufficientFundsError implements Error {
     name: 'InsufficientFundsError';
     stack: string;
 
+}
+
+export class AccountReport implements Report {
+    reportType: ReportType.AccountReport;
+    account: Account;
+
+    constructor(account: Account) {
+        this.account = account;
+    }
+
+    toString(): string {
+        let reportString = `${this.reportType}: Id: ${this.account.getId()} | Owner: ${this.account.getOwner()}  | Generated: ${new Date()}`;
+        reportString = reportString + `\n History: `;
+        for (let operation of this.account.getHistory()) {
+            reportString = reportString + '\n' + operation.generateReport().toString();
+        }
+        return reportString;
+    }
 }
 
 

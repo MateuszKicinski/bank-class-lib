@@ -1,10 +1,23 @@
+import {IBABank, IBATransaction, IBATransfer, InterBankAgency} from "./iba/InterBankAgency";
 import {Account} from "./accounts/account";
-import {IdGenerator} from "./utils";
+import {IBAIncomingOperation} from "./operations/operation";
 
-export class Bank {
-    accounts: Account[];
+export class Bank extends IBABank {
+    accounts: Account[] = [];
 
-    openAccount() {
-        this.accounts.push(new Account(IdGenerator.generateId()));
+    constructor(bankName: string, bankId: number, ibaAgency: InterBankAgency) {
+        super(bankName, bankId, ibaAgency);
+    }
+
+    openAccount(account: Account) {
+        this.accounts.push(account);
+    }
+
+    fail(failedTransaction: IBATransaction) {
+        new IBATransfer(failedTransaction.amount, failedTransaction.targetBankId, null, failedTransaction.sourceBankId, failedTransaction.sourceClientInfo).makeTransaction(this.getAgency());
+    }
+
+    receiveTransaction(transaction: IBATransaction) {
+        new IBAIncomingOperation(this, transaction).make();
     }
 }

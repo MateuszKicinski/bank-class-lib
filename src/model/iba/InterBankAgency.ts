@@ -6,11 +6,11 @@ export class InterBankAgency {
     }
 
     isIdFree(id: number) {
-        return !!this.findBank(id);
+        return !this.findBank(id);
     }
 
-    findBank(id:number):IBABank{
-       return this.banks.filter(bank => bank.getId() === id)[0];
+    findBank(id: number): IBABank {
+        return this.banks.filter(bank => bank.getId() === id)[0];
     }
 }
 
@@ -42,9 +42,13 @@ export abstract class IBABank {
         transaction.makeTransaction(this.agency);
     }
 
+    getAgency() {
+        return this.agency;
+    }
+
     abstract receiveTransaction(transaction: IBATransaction)
 
-    abstract fail()
+    abstract fail(failedTransaction: IBATransaction)
 }
 
 
@@ -80,9 +84,9 @@ export class IBATransfer implements IBATransaction {
     makeTransaction(agency: InterBankAgency) {
         const targetBank = agency.findBank(this.targetBankId);
         const sourceBank = agency.findBank(this.sourceBankId);
-        if(!targetBank){
-            sourceBank.fail();
-        } else{
+        if (!targetBank || !sourceBank) {
+            throw Error('Couldn\'t find the bank');
+        } else {
             targetBank.receiveTransaction(this);
         }
     }

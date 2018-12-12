@@ -1,33 +1,42 @@
 import {Interest} from "../interest";
-import {IdGenerator} from "../utils";
-import {Account} from "./account";
 import {LinkedAccount} from "./linked-account";
+import {Operation, TransferOperation} from "../operations/operation";
+import {Account} from "./account";
+import {Report, ReportType} from "../reports";
 
-export class DepositAccount implements LinkedAccount {
-    constructor(days: number, amount: number, interest: Interest, parentAccount: Account) {
-        this.parentAccount.subtract(amount);
+export class DepositAccount extends LinkedAccount {
+    constructor(days: number, operation: Operation, interest: Interest, parentAccount: Account) {
+        super();
+        this.parentAccount = parentAccount
         this.active = true;
-        this.depositDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * days);
-        this.id = IdGenerator.generateId();
-        this.initialAmount = amount;
+        this.endDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * days);
+        this.initialAmount = operation.amount;
         this.interest = interest;
     }
 
     parentAccount: Account;
-    depositDate: Date;
+    endDate: Date;
     interest: Interest;
     initialAmount: number;
 
 
     close() {
         this.active = false;
-        if (Date.now() > this.depositDate.getTime()) {
-            return this.initialAmount + this.interest.calculate()
+        let repayAmount = 0;
+        if (Date.now() > this.endDate.getTime()) {
+            repayAmount = this.initialAmount + this.interest.calculate()
         } else {
-            return this.initialAmount;
+            repayAmount = this.initialAmount;
         }
+        new TransferOperation(this, this.parentAccount, repayAmount);
     }
 
-    id: number;
-    active: boolean;
+    generateReport(): Report {
+        return undefined;
+    }
+}
+
+export class DepositAccountReport implements Report {
+    reportType: ReportType.DepositReport;
+
 }

@@ -8,7 +8,7 @@ var InterBankAgency = /** @class */ (function () {
         this.banks.push(bank);
     };
     InterBankAgency.prototype.isIdFree = function (id) {
-        return !!this.findBank(id);
+        return !this.findBank(id);
     };
     InterBankAgency.prototype.findBank = function (id) {
         return this.banks.filter(function (bank) { return bank.getId() === id; })[0];
@@ -37,6 +37,9 @@ var IBABank = /** @class */ (function () {
     IBABank.prototype.makeTransaction = function (transaction) {
         transaction.makeTransaction(this.agency);
     };
+    IBABank.prototype.getAgency = function () {
+        return this.agency;
+    };
     return IBABank;
 }());
 exports.IBABank = IBABank;
@@ -51,8 +54,8 @@ var IBATransfer = /** @class */ (function () {
     IBATransfer.prototype.makeTransaction = function (agency) {
         var targetBank = agency.findBank(this.targetBankId);
         var sourceBank = agency.findBank(this.sourceBankId);
-        if (!targetBank) {
-            sourceBank.fail();
+        if (!targetBank || !sourceBank) {
+            throw Error('Couldn\'t find the bank');
         }
         else {
             targetBank.receiveTransaction(this);

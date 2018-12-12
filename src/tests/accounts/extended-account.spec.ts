@@ -1,40 +1,41 @@
 import chai = require('chai');
-import {Account} from "../../model/accounts/account";
-import {Operation} from "../../model/operation";
+import {Operation} from "../../model/operations/operation";
 import {Interest} from "../../model/interest";
+import {Report} from "../../model/reports";
+import {ExtenedAccount} from "../../model/accounts/extended-account";
 
 const expect = chai.expect;
 
-describe('account tests', () => {
+describe('extended account tests', () => {
     describe('check', () => {
         let account;
         before(() => {
-            account = new Account(1, 'TestOwner');
+            account = new ExtenedAccount('TestOwner', 1);
             account.balance = 300;
         });
 
         it('should show correct balance of account', () => {
-            expect(account.checkBalance()).equal(300);
+            expect(account.availableFunds()).equal(300);
         });
     });
 
     describe('add', () => {
         let account;
         before(() => {
-            account = new Account(1, 'TestOwner');
+            account = new ExtenedAccount('TestOwner', 1);
             account.balance = 300;
         });
 
         it('should add correct amount of money to account', () => {
             account.add(new TestOperation(200));
-            expect(account.checkBalance()).equal(500);
+            expect(account.availableFunds()).equal(500);
         });
     });
 
     describe('subtract - success', () => {
         let account;
         before(() => {
-            account = new Account(1, 'TestOwner');
+            account = new ExtenedAccount('TestOwner', 1);
             account.balance = 300;
         });
 
@@ -47,7 +48,7 @@ describe('account tests', () => {
     describe('subtract - error', () => {
         let account;
         before(() => {
-            account = new Account(1, 'TestOwner');
+            account = new ExtenedAccount('TestOwner', 1);
             account.balance = 300;
         });
 
@@ -59,7 +60,7 @@ describe('account tests', () => {
     describe('should add new interest to account without interest', () => {
         let account;
         before(() => {
-            account = new Account(1, 'TestOwner');
+            account = new ExtenedAccount('TestOwner', 1);
             account.changeInterest(new TestInterest());
             account.balance = 300;
         });
@@ -89,6 +90,9 @@ export class TestOperation extends Operation {
 
     makeOperationScenario() {
     }
+
+    make() {
+    }
 }
 
 export class TestInterest implements Interest {
@@ -97,6 +101,10 @@ export class TestInterest implements Interest {
     }
 
     type: null;
+
+    generateReport(): Report {
+        return undefined;
+    }
 }
 
 
