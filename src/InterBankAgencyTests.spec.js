@@ -4,7 +4,7 @@ var InterBankAgency_1 = require("./InterBankAgency");
 var classes_1 = require("./classes");
 var chai = require("chai");
 var expect = chai.expect;
-describe('Inter Bank Agency', function () {
+describe('Inter Account Agency', function () {
     var agency;
     var bank1;
     var bank2;
@@ -12,8 +12,8 @@ describe('Inter Bank Agency', function () {
     var account2;
     before(function () {
         agency = new InterBankAgency_1.InterBankAgency();
-        bank1 = new classes_1.MyBank('Bank 1', 1, agency);
-        bank2 = new classes_1.MyBank('Bank 2', 2, agency);
+        bank1 = new classes_1.MyBank('Account 1', 1, agency);
+        bank2 = new classes_1.MyBank('Account 2', 2, agency);
         account1 = new classes_1.Account(1, 1);
         account2 = new classes_1.Account(2, 2);
         bank1.accounts.push(account1);
@@ -23,17 +23,17 @@ describe('Inter Bank Agency', function () {
         var error;
         var bank;
         try {
-            bank = new classes_1.MyBank('Bank 1', 1, agency);
+            bank = new classes_1.MyBank('Account 1', 1, agency);
         }
         catch (e) {
             error = e;
         }
-        expect(error).to.deep.equal('Bank with id: 1 already exists');
+        expect(error).to.deep.equal('Account with id: 1 already exists');
         expect(bank).to.equal(undefined);
     });
     it('should create bank 2', function () {
-        var bank = new classes_1.MyBank('Bank 3', 3, agency);
-        expect(bank).to.have.property('name').to.equal('Bank 3');
+        var bank = new classes_1.MyBank('Account 3', 3, agency);
+        expect(bank).to.have.property('name').to.equal('Account 3');
         expect(bank).to.have.property('id').to.equal(3);
     });
     it('should transfer amount between two banks', function () {

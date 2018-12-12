@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var classes_1 = require("./classes");
+var classes_1 = require("../../classes");
 var chai = require("chai");
 var expect = chai.expect;
 describe('account tests', function () {
